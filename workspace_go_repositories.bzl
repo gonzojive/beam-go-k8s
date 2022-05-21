@@ -2025,11 +2025,19 @@ def gazelle_managed_go_repositories():
         sum = "h1:4m1jFN3fHeKo0UvpraW2ipO2O0rgp5w2ugXeggtecAk=",
         version = "v0.0.0-20210728212813-7823e685a01f",
     )
+    # go_repository(
+    #     name = "org_golang_google_grpc",
+    #     importpath = "google.golang.org/grpc",
+    #     sum = "h1:Klz8I9kdtkIN6EpHHUOMLCYhTn/2WAe5a0s1hcBkdTI=",
+    #     version = "v1.39.0",
+    # )
+    # See https://github.com/bazelbuild/rules_go/blob/4a42b4092abdc60d14419a79afaec3659fbceb26/go/workspace.rst#id8
     go_repository(
         name = "org_golang_google_grpc",
+        build_file_proto_mode = "disable",
         importpath = "google.golang.org/grpc",
-        sum = "h1:Klz8I9kdtkIN6EpHHUOMLCYhTn/2WAe5a0s1hcBkdTI=",
-        version = "v1.39.0",
+        sum = "h1:oCjezcn6g6A75TGoKYBPgKmVBLexhYLM6MebdrPApP8=",
+        version = "v1.46.0",
     )
     go_repository(
         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
@@ -2040,8 +2048,8 @@ def gazelle_managed_go_repositories():
     go_repository(
         name = "org_golang_google_protobuf",
         importpath = "google.golang.org/protobuf",
-        sum = "h1:SnqbnDw1V7RiZcXPx5MEeqPv2s79L9i7BJUlG/+RurQ=",
-        version = "v1.27.1",
+        sum = "h1:w43yiav+6bVFTBQFZX0r7ipe9JQ1QsbMgHwbBziscLw=",
+        version = "v1.28.0",
     )
     go_repository(
         name = "org_golang_x_crypto",

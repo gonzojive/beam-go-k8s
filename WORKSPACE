@@ -31,6 +31,20 @@ go_rules_dependencies()
 
 go_register_toolchains(version = "1.18.2")
 
+# Manually added go repositories
+
+go_repository(
+    name = "org_golang_x_xerrors",  # keep
+    importpath = "golang.org/x/xerrors",
+    sum = "h1:go1bK/D/BFZV2I8cIQd1NKEZ+0owSTG1fDTci4IqFcE=",
+    version = "v0.0.0-20200804184101-5ec99f83aff1",
+)
+
+load("//:workspace_go_repositories.bzl", "gazelle_managed_go_repositories")
+
+# gazelle:repository_macro workspace_go_repositories.bzl%gazelle_managed_go_repositories
+gazelle_managed_go_repositories()
+
 gazelle_dependencies()
 
 ### rules_proto: https://github.com/bazelbuild/rules_proto
@@ -117,16 +131,3 @@ k8s_defaults(
     kind = "deployment",
 )
 
-# Manually added go repositories
-
-go_repository(
-    name = "org_golang_x_xerrors",  # keep
-    importpath = "golang.org/x/xerrors",
-    sum = "h1:go1bK/D/BFZV2I8cIQd1NKEZ+0owSTG1fDTci4IqFcE=",
-    version = "v0.0.0-20200804184101-5ec99f83aff1",
-)
-
-load("//:workspace_go_repositories.bzl", "gazelle_managed_go_repositories")
-
-# gazelle:repository_macro workspace_go_repositories.bzl%gazelle_managed_go_repositories
-gazelle_managed_go_repositories()
