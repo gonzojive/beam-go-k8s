@@ -1,0 +1,21 @@
+# See https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: beam-flink-job-server
+  #nnotations:
+  # cloud.google.com/load-balancer-type: "Internal"
+  name: beam-flink-job-server
+spec:
+  ports:
+  - port: 8099
+    protocol: TCP
+    name: "job-service"
+  - port: 8098
+    protocol: TCP
+    name: "artifact-service"
+  selector:
+    app: beam-flink-job-server
+  # See https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
+  type: ClusterIP

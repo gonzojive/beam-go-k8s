@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beam-flink-job-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beam-flink-job-server
+  template:
+    metadata:
+      labels:
+        app: beam-flink-job-server
+    spec:
+      containers:
+      - name: main
+        image: apache/beam_flink1.14_job_server:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8099
+          # org.apache.beam.model.job_management.v1.JobService
+          name: "job-service"
+        - containerPort: 8098
+          # org.apache.beam.model.job_management.v1.ArtifactStagingService
+          name: "artifact-svc"
+        - containerPort: 8097
+          # The Java expansion service port
+          name: "java-expansion"
+        args: [
+          # See https://sourcegraph.com/github.com/apache/beam/-/blob/runners/java-job-service/src/main/java/org/apache/beam/runners/jobsubmission/JobServerDriver.java?L75:23#tab=references
+          "--job-host",
+          # See https://devops.stackexchange.com/questions/2445/use-k8s-deployment-hostname-in-yaml-config
+          "beam-flink-job-server.default",
+        ]
+      # This is an attempt to make the job server return
+      # beam-flink-job-server.default:8098 as the artifact service.
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "beam-flink-job-server.default"

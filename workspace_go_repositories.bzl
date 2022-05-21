@@ -2025,12 +2025,6 @@ def gazelle_managed_go_repositories():
         sum = "h1:4m1jFN3fHeKo0UvpraW2ipO2O0rgp5w2ugXeggtecAk=",
         version = "v0.0.0-20210728212813-7823e685a01f",
     )
-    # go_repository(
-    #     name = "org_golang_google_grpc",
-    #     importpath = "google.golang.org/grpc",
-    #     sum = "h1:Klz8I9kdtkIN6EpHHUOMLCYhTn/2WAe5a0s1hcBkdTI=",
-    #     version = "v1.39.0",
-    # )
     # See https://github.com/bazelbuild/rules_go/blob/4a42b4092abdc60d14419a79afaec3659fbceb26/go/workspace.rst#id8
     go_repository(
         name = "org_golang_google_grpc",

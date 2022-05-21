@@ -131,3 +131,11 @@ k8s_defaults(
     kind = "deployment",
 )
 
+http_file(
+    name = "cert_manager_yaml",
+    downloaded_file_path = "cert-manager.yaml",
+    sha256 = "517b57b60e37288ced462bb541f3f5dabb53f59f40c262387403862985b01ae8",
+    urls = [
+        "https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml",
+    ],
+)

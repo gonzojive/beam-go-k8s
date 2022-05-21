@@ -1,5 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@k8s_deploy//:defaults.bzl", "k8s_deploy")
 
 package(default_visibility = ["//:__subpackages__"])
 
@@ -35,4 +36,35 @@ go_library(
 go_binary(
     name = "beam-go-k8s",
     embed = [":beam-go-k8s_lib"],
+)
+
+#############################################################
+# Build targets for Kubernetes resources.
+#
+# Deploy this by running, for example,
+#
+# bazel run //:cert-manager.apply
+#
+# Destroy with
+#
+# bazel run //:cert-manager.delete
+#
+#############################################################
+
+# cert-manager is required according to
+#
+# https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-main/docs/try-flink-kubernetes-operator/quick-start/
+k8s_deploy(
+    name = "cert-manager",
+    template = "@cert_manager_yaml//file:cert-manager.yaml",
+)
+
+k8s_deploy(
+    name = "beam-flink-job-server",
+    template = ":beam-flink-job-server.yaml",
+)
+
+k8s_deploy(
+    name = "beam-flink-job-server-service",
+    template = ":beam-flink-job-server-service.yaml",
 )
