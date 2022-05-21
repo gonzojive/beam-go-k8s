@@ -64,7 +64,7 @@ Filial: 1
 ...
 ```
 
-## Option 2: Run using 
+## Option 2: Run local binary using a job server in a cluster
 
 **TODO: NOT WORKING YET**
 
@@ -73,10 +73,48 @@ bazel run //:beam-flink-job-server.apply
 bazel run //:beam-flink-job-server-service.apply
 ```
 
+Rune `kubefwd` in a terminal:
+
+```shell
+sudo -E <PATH_TO_KUBEFWD> services \
+  --kubeconfig <PATH_TO_HOME>/.kube/config \
+  --namespace kubernetes-dashboard \
+  --namespace default \
+  --namespace kube-system
+```
+
+fails:
+
+```shell
+bazel run :beam-go-k8s -- \
+  --runner flink \
+  --endpoint beam-flink-job-server.default:8099 \
+  --output /tmp/output-flink.txt  \
+  --environment_type LOOPBACK
+```
+
 ## Option 3: Run using Kubernetes operator
 
 **TODO: NOT WORKING YET**
 
+### Set up the Apace Flink Kubernetes operator
+
+I would like to figure out how to use
+[github.com/apache/flink-kubernetes-operator](https://github.com/apache/flink-kubernetes-operator)
+to run jobs.
+
 ```shell
 bazel run //:cert-manager.apply
 ```
+
+Install the operator:
+
+```shell
+helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-0.1.0/
+helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator
+```
+
+(TODO: Install this with bazel commands to avoid needing
+to install helm locally.)
+
+### TODO: Run job using Kubernetes operator
