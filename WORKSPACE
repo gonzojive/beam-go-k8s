@@ -4,7 +4,6 @@ workspace(
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
-
 ### rules_go: https://github.com/bazelbuild/rules_go
 
 http_archive(
@@ -33,6 +32,24 @@ go_rules_dependencies()
 go_register_toolchains(version = "1.18.2")
 
 gazelle_dependencies()
+
+### rules_proto: https://github.com/bazelbuild/rules_proto
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1",
+    strip_prefix = "rules_proto-4.0.0",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0.tar.gz",
+    ],
+)
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
 
 ####################################################
 # Support creating Docker images for Kubernetes    #
@@ -76,12 +93,12 @@ container_pull(
 
 http_archive(
     name = "io_bazel_rules_k8s",
+    sha256 = "773aa45f2421a66c8aa651b8cecb8ea51db91799a405bd7b913d77052ac7261a",
     strip_prefix = "rules_k8s-0.5",
     urls = ["https://github.com/bazelbuild/rules_k8s/archive/v0.5.tar.gz"],
-    sha256 = "773aa45f2421a66c8aa651b8cecb8ea51db91799a405bd7b913d77052ac7261a",
 )
 
-load("@io_bazel_rules_k8s//k8s:k8s.bzl", "k8s_repositories", "k8s_defaults")
+load("@io_bazel_rules_k8s//k8s:k8s.bzl", "k8s_defaults", "k8s_repositories")
 
 k8s_repositories()
 
@@ -100,14 +117,16 @@ k8s_defaults(
     kind = "deployment",
 )
 
-
-###############################################
-# Go repositories
-###############################################
+# Manually added go repositories
 
 go_repository(
-    name = "org_golang_x_xerrors",
+    name = "org_golang_x_xerrors",  # keep
     importpath = "golang.org/x/xerrors",
     sum = "h1:go1bK/D/BFZV2I8cIQd1NKEZ+0owSTG1fDTci4IqFcE=",
     version = "v0.0.0-20200804184101-5ec99f83aff1",
 )
+
+load("//:workspace_go_repositories.bzl", "gazelle_managed_go_repositories")
+
+# gazelle:repository_macro workspace_go_repositories.bzl%gazelle_managed_go_repositories
+gazelle_managed_go_repositories()

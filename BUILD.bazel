@@ -1,3 +1,4 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//:__subpackages__"])
@@ -8,3 +9,30 @@ package(default_visibility = ["//:__subpackages__"])
 # gazelle:exclude bazel-out
 gazelle(name = "gazelle")
 
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=workspace_go_repositories.bzl%gazelle_managed_go_repositories",
+        "-prune",
+    ],
+    command = "update-repos",
+)
+
+go_library(
+    name = "beam-go-k8s_lib",
+    srcs = ["beam_program.go"],
+    importpath = "github.com/gonzojive/beam-go-k8s",
+    deps = [
+        "@com_github_apache_beam_sdks_v2//go/pkg/beam",
+        "@com_github_apache_beam_sdks_v2//go/pkg/beam/core/runtime/harness/session",
+        "@com_github_apache_beam_sdks_v2//go/pkg/beam/io/textio",
+        "@com_github_apache_beam_sdks_v2//go/pkg/beam/transforms/stats",
+        "@com_github_apache_beam_sdks_v2//go/pkg/beam/x/beamx",
+    ],
+)
+
+go_binary(
+    name = "beam-go-k8s",
+    embed = [":beam-go-k8s_lib"],
+)
