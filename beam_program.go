@@ -73,7 +73,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -84,6 +86,7 @@ import (
 	"github.com/apache/beam/sdks/v2/go/pkg/beam/x/beamx"
 
 	_ "github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/harness/session"
+	// _ "github.com/apache/beam/sdks/v2/go/pkg/beam/options/jobopts" // not yet used
 )
 
 // Concept #2: Defining your own configuration options. Pipeline options can
@@ -187,6 +190,11 @@ func CountWords(s beam.Scope, lines beam.PCollection) beam.PCollection {
 func main() {
 	// If beamx or Go flags are used, flags must be parsed first.
 	flag.Parse()
+
+	if err := setWorkerBinaryFlag(); err != nil {
+		log.Fatalf("failed to set --worker_binary: %v", err)
+	}
+
 	// beam.Init() is an initialization hook that must be called on startup. On
 	// distributed runners, it is used to intercept control.
 	beam.Init()
@@ -210,4 +218,18 @@ func main() {
 	if err := beamx.Run(context.Background(), p); err != nil {
 		log.Fatalf("Failed to execute job: %v", err)
 	}
+	outputText, err := ioutil.ReadFile(*output)
+	if err != nil {
+		log.Fatalf("Failed to read output of job: %v", err)
+	}
+	log.Printf("got output:\n%s", string(outputText))
+}
+
+func setWorkerBinaryFlag() error {
+	binPath, err := os.Executable()
+	if err != nil {
+		return err
+	}
+	flag.Set("worker_binary", binPath)
+	return nil
 }

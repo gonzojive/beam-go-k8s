@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-pipeline
+spec:
+  # selector:
+  #   matchLabels:
+  #     app: example-pipeline
+  template:
+    # metadata:
+    #   labels:
+    #     app: example-pipeline
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: main-program
+        image: beam-program:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        args: [
+          "--runner",
+          "flink",
+          "--endpoint",
+          "localhost:8099",
+          "--output",
+          "/tmp/output-flink.txt",
+          "--environment_type",
+          "LOOPBACK", # DOCKER is also valid but doesn't work.
+        ]
+      - name: job-server
+        image: apache/beam_flink1.14_job_server:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8099
+          # org.apache.beam.model.job_management.v1.JobService
+          name: "job-service"
+        - containerPort: 8098
+          # org.apache.beam.model.job_management.v1.ArtifactStagingService
+          name: "artifact-svc"
+        - containerPort: 8097
+          # The Java expansion service port
+          name: "java-expansion"
+        args: []

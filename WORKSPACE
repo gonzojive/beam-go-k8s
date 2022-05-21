@@ -131,6 +131,58 @@ k8s_defaults(
     kind = "deployment",
 )
 
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+# Originally from
+# https://github.com/brownbeartech/kubernetes-with-bazel/commit/4b07e314007dbd559d70c2578a8043492eae27f5
+git_repository(
+    name = "distroless",
+    commit = "2a50c6bd62d7ad91c1b0a351fdc0897711d82646",
+    remote = "https://github.com/GoogleContainerTools/distroless",
+)
+
+load("@distroless//package_manager:dpkg.bzl", "dpkg_list", "dpkg_src")
+load("@distroless//:debian_archives.bzl", debian_repositories = "repositories")
+
+debian_repositories()
+
+dpkg_src(
+    name = "debian_stretch",
+    arch = "amd64",
+    distro = "stretch",
+    sha256 = "4cb2fac3e32292613b92d3162e99eb8a1ed7ce47d1b142852b0de3092b25910c",
+    snapshot = "20180406T095535Z",
+    url = "http://snapshot.debian.org/archive",
+)
+
+dpkg_list(
+    name = "package_bundle",
+    packages = [
+        "base-files",
+        "ca-certificates",
+        "openjdk-8-jre-headless",
+        "openssl",
+        "python2.7-minimal",
+        "ssh",
+        "libc6",
+        "libgcc1",
+        "libgomp1",
+        "libpython2.7-minimal",
+        "libpython2.7-stdlib",
+        "libssl1.1",
+        "libstdc++6",
+        "netbase",
+        "tzdata",
+        "zlib1g",
+        # Add any other debian packages you need here.
+    ],
+    sources = [
+        "@debian_stretch//file:Packages.json",
+    ],
+)
+
+### Apache beam operator stuff
+
 http_file(
     name = "cert_manager_yaml",
     downloaded_file_path = "cert-manager.yaml",

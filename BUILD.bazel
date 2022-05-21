@@ -1,6 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@k8s_deploy//:defaults.bzl", "k8s_deploy")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
 
 package(default_visibility = ["//:__subpackages__"])
 
@@ -67,4 +68,25 @@ k8s_deploy(
 k8s_deploy(
     name = "beam-flink-job-server-service",
     template = ":beam-flink-job-server-service.yaml",
+)
+
+k8s_deploy(
+    name = "example-pipeline",
+    template = ":example-pipeline.yaml",
+    # An optional collection of docker_build images to publish
+    # when this target is bazel run.  The digest of the published
+    # image is substituted as a part of the resolution process.
+    images = {
+        "beam-program:latest": ":image",
+    },
+)
+
+go_image(
+    name = "image",
+    args = [
+    ],
+    base = "@distroless//base:base_root_amd64_debian11",
+    binary = ":beam-go-k8s",
+    goarch = "amd64",
+    goos = "linux",
 )
