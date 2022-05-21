@@ -1,0 +1,10 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+package(default_visibility = ["//:__subpackages__"])
+
+# gazelle:prefix github.com/gonzojive/beam-go-k8s
+# gazelle:exclude bazel-beam-go-k8s
+# gazelle:exclude bazel-bin
+# gazelle:exclude bazel-out
+gazelle(name = "gazelle")
+

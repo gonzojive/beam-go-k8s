@@ -1,0 +1,4 @@
+bazel-bin
+bazel-beam-go-k8s
+bazel-out
+bazel-testlogs
